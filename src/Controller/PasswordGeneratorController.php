@@ -5,15 +5,48 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class PasswordGeneratorController extends AbstractController
 {
-    #[Route('/password/generator', name: 'app_password_generator')]
+    private $_client = null;
+
+    private array $_aHeaders    = [];
+
+    public function __construct(HttpClientInterface $client)
+    {
+        $this->_client = $client;
+        $this->_aHeaders = apache_request_headers();
+    }
+    #[Route('/api/v1/password_generator', name: 'app_password_generator')]
     public function index(): JsonResponse
-    {die;
+    {
+ 
+        $response = $this->_client->request(
+            'POST',
+            'http://pass.test/api/v1/password_generator',
+            [
+                'headers' => [
+                    'length'    => $this->_aHeaders['length'],
+                    'lowercase' => $this->_aHeaders['lowercase'],
+                    'uppercase' => $this->_aHeaders['uppercase'],
+                    'symbols'   => $this->_aHeaders['symbols'],
+                    'numbers'   => $this->_aHeaders['numbers'],
+                ],
+            ],
+        );
+       
+        $statusCode = $response->getStatusCode();
+        // $statusCode = 200
+        $contentType = $response->getHeaders()['content-type'][0];
+        // $contentType = 'application/json'
+        $content = $response->getContent();
+        // $content = '{"id":521583, "name":"symfony-docs", ...}'
+        $content = $response->toArray();
+        // $content = ['id' => 521583, 'name' => 'symfony-docs', ...]
+        
         return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/PasswordGeneratorController.php',
+            'data'    => $content['data'],
         ]);
     }
 }
