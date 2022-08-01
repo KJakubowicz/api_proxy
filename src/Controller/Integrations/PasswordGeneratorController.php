@@ -1,27 +1,43 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Integrations;
 
+use phpDocumentor\Reflection\Types\Integer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
+
 class PasswordGeneratorController extends AbstractController
 {
     private $_client = null;
 
-    private array $_aHeaders    = [];
+    private array $_aHeaders = [];
 
-    public function __construct(HttpClientInterface $client)
-    {
+    public function __construct(HttpClientInterface $client, $_aHeaders = null)
+    {   
         $this->_client = $client;
-        $this->_aHeaders = apache_request_headers();
+        $this->_aHeaders = $_aHeaders;
     }
+
+    public function auth(): int 
+    { 
+        
+        $response = $this->_client->request(
+            'POST',
+            'http://pass.test/api/v1/auth',
+        );
+  
+        $statusCode = $response->getStatusCode();
+        
+        return $statusCode;
+    }
+
     #[Route('/api/v1/password_generator', name: 'app_password_generator')]
     public function index(): JsonResponse
     {
- 
+print_r( $this->_aHeaders);die;
         $response = $this->_client->request(
             'POST',
             'http://pass.test/api/v1/password_generator',
@@ -49,4 +65,6 @@ class PasswordGeneratorController extends AbstractController
             'data'    => $content['data'],
         ]);
     }
+   
+
 }

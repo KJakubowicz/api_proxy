@@ -32,7 +32,27 @@ nelmio_api_doc:
                         -   in: header
                             name: numbers
                             required: true
+            /api/v1/proxy:
+                get:
+                    summary: Proxy connection.
+                    parameters:
+                        -   in: header
+                            name: code
+                            required: true
+                        -   in: header
+                            name: end_point
+                            required: true
+                        -   in: header
+                            name: method
+                            required: true
+                        -   in: header
+                            name: options
+                            required: true
+                            schema:
+                                type: array
+                                items:
 
+                                
     areas: # to filter documented areas
         path_patterns:
             - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
