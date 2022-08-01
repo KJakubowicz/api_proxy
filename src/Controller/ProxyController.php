@@ -33,10 +33,8 @@ class ProxyController extends AbstractController
         }
 
         $aData = $this->_oClass->{$this->_aHeaders['method']}();
-        
-        print_r($aData);die;
+        //TODO-dodać obsłużenie dla respone oraz dodanie opcji array do dokumentacji
         // $iConnection = $oClass->$this->_sAuthMethod();
-        print_r($test);die;
         return $this->render('proxy/index.html.twig', [
             'controller_name' => 'ProxyController',
         ]);

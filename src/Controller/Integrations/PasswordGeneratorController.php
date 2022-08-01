@@ -37,7 +37,6 @@ class PasswordGeneratorController extends AbstractController
     #[Route('/api/v1/password_generator', name: 'app_password_generator')]
     public function index(): JsonResponse
     {
-print_r( $this->_aHeaders);die;
         $response = $this->_client->request(
             'POST',
             'http://pass.test/api/v1/password_generator',
