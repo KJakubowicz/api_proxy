@@ -1,69 +1,91 @@
 <?php
-
+/**
+ * Controller for generate the passwords
+ * 
+ * PHP version 8.1.6
+ * 
+ * @category Controller
+ * @package  Integrations
+ * @author   Kamil Jakubowicz <kjakubowicz98@interia.pl>
+ * @license  GNU General Public License version 2 or later
+ * @link     none  
+ */
 namespace App\Controller\Integrations;
 
+use App\Intefraces\Auth\AuthInterface;
 use phpDocumentor\Reflection\Types\Integer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use App\Controller\Auth\AuthController;
+use App\Controller\Request\DedicatedRequestController;
 
-
-class PasswordGeneratorController extends AbstractController
+/**
+ * Class PasswordGeneratorController
+ * 
+ * PHP version 8.1.6
+ * 
+ * @category Controller
+ * @package  Integrations
+ * @author   Kamil Jakubowicz <kjakubowicz98@interia.pl>
+ * @license  GNU General Public License version 2 or later
+ * @link     none  
+ */
+class PasswordGeneratorController extends AbstractController implements AuthInterface
 {
-    private $_client = null;
+    private $_oClient  = null;
+    private $_aHeaders = [];
+    private $_oAuth    = null;
+    private $_oRequest = null;
 
-    private array $_aHeaders = [];
-
-    public function __construct(HttpClientInterface $client, $_aHeaders = null)
+    /**
+     * Constructor for PasswordGeneratorController
+     *
+     * @param object $oClient   object form HttpClient
+     * @param array  $_aHeaders array of headers
+     * 
+     * @return void
+     */
+    public function __construct(HttpClientInterface $oClient, $_aHeaders = null)
     {   
-        $this->_client = $client;
+        $this->_oClient  = $oClient;
         $this->_aHeaders = $_aHeaders;
+        $this->_oAuth    = new AuthController();
+        $this->_oRequest = new DedicatedRequestController($oClient);
     }
 
-    public function auth(): int 
+    /**
+     * Method for check authorization
+     * 
+     * @return AuthController
+     */
+    public function auth(): AuthController 
     { 
         
-        $response = $this->_client->request(
+        $response = $this->_oClient->request(
             'POST',
             'http://pass.test/api/v1/auth',
         );
   
         $statusCode = $response->getStatusCode();
         
-        return $statusCode;
+        return $this->_oAuth;
     }
 
-    #[Route('/api/v1/password_generator', name: 'app_password_generator')]
-    public function index(): JsonResponse
+    
+    public function passwordGenerator(): array
     {
-print_r( $this->_aHeaders);die;
-        $response = $this->_client->request(
-            'POST',
-            'http://pass.test/api/v1/password_generator',
-            [
-                'headers' => [
-                    'length'    => $this->_aHeaders['length'],
-                    'lowercase' => $this->_aHeaders['lowercase'],
-                    'uppercase' => $this->_aHeaders['uppercase'],
-                    'symbols'   => $this->_aHeaders['symbols'],
-                    'numbers'   => $this->_aHeaders['numbers'],
-                ],
-            ],
-        );
-       
-        $statusCode = $response->getStatusCode();
-        // $statusCode = 200
-        $contentType = $response->getHeaders()['content-type'][0];
-        // $contentType = 'application/json'
-        $content = $response->getContent();
-        // $content = '{"id":521583, "name":"symfony-docs", ...}'
-        $content = $response->toArray();
-        // $content = ['id' => 521583, 'name' => 'symfony-docs', ...]
-        
-        return $this->json([
-            'data'    => $content['data'],
-        ]);
+        $aHeaders = [
+            'length'    => $this->_aHeaders['length'],
+            'lowercase' => $this->_aHeaders['lowercase'],
+            'uppercase' => $this->_aHeaders['uppercase'],
+            'symbols'   => $this->_aHeaders['symbols'],
+            'numbers'   => $this->_aHeaders['numbers'],
+        ];
+        $aResponse = $this->_oRequest->apiKeyRequest('http://pass.test/api/v1/password_generator', 'POST', $aHeaders);
+
+        return $aResponse;
     }
    
 
