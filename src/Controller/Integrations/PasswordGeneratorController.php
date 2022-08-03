@@ -73,7 +73,11 @@ class PasswordGeneratorController extends AbstractController implements AuthInte
         return $this->_oAuth;
     }
 
-    
+    /**
+     * Method for generate a passowrd
+     * 
+     * @return array
+     */
     public function passwordGenerator(): array
     {
         $aHeaders = [
@@ -84,7 +88,7 @@ class PasswordGeneratorController extends AbstractController implements AuthInte
             'numbers'   => $this->_aHeaders['numbers'],
         ];
         $aResponse = $this->_oRequest->apiKeyRequest('http://pass.test/api/v1/password_generator', 'POST', $aHeaders);
-
+        
         return $aResponse;
     }
    
