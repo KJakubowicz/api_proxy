@@ -35,6 +35,19 @@ nelmio_api_doc:
                         -   in: header
                             name: numbers
                             required: true
+            /api/v1/login/{user}:
+                post:
+                    summary: Login.
+                    parameters:
+                        -   in: header
+                            name: code
+                            required: true
+                        -   in: header
+                            name: username
+                            required: true
+                        -   in: header
+                            name: password
+                            required: true
 
 
                                 

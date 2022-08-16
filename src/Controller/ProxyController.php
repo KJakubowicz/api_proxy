@@ -80,4 +80,15 @@ class ProxyController extends AbstractController
     {
         return $this->proxyFit('passwordGenerator');
     }
+
+    /**
+     * Method for login to Division services
+     * 
+     * @return JsonResponse
+     */
+    #[Route('/api/v1/login/{user}', name: 'app_division_password')]
+    public function divisionAuth()
+    {
+        return $this->proxyFit('auth');
+    }
 }
