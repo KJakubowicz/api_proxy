@@ -86,7 +86,7 @@ class ProxyController extends AbstractController
      * 
      * @return JsonResponse
      */
-    #[Route('/api/v1/login/{user}', name: 'app_division_password')]
+    #[Route('/api/v1/login', name: 'app_division_password')]
     public function divisionAuth()
     {
         return $this->proxyFit('auth');

@@ -62,18 +62,13 @@ class DivisionController extends AbstractController implements AuthInterface
      */
     public function auth(): AuthController 
     { 
-        $test = [
-            "username" => "dunglas@example.com",
-            "password" => "MyPassword"
-        ];
-        $test = json_encode($test);
         $response = $this->_oClient->request(
             'POST',
-            'http://division.test/api/login/'.$test,
+            'http://division.test/api/login',
         );
         
         $statusCode = $response->getStatusCode();
-        print_r($response);die;
+        print_r($response->getContent());die;
         return $this->_oAuth;
     }
 
